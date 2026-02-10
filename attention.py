@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 
 class CausalSelfAttention(nn.Module):
-    def __init__(self, d_model, bias):
+    def __init__(self, d_model, bias=False):
         super().__init__()
 
         self.d_model = d_model
@@ -14,7 +14,7 @@ class CausalSelfAttention(nn.Module):
         self.W_V = nn.Linear(d_model, d_model, bias=bias)
 
     def forward(self, x):
-        batch, num_tokens, d_model = X.shape
+        batch, num_tokens, d_model = x.shape
 
         # print(X.shape)
 
