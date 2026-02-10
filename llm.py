@@ -1,61 +1,44 @@
 import torch
 import torch.nn as nn
-import torch.optim as optim
 import torch.nn.functional as F
+from block import TransformerBlock
+from embeddings import EmbeddingLayer
 
-class EncodingLayer(nn.Module):
-
-    def __init__(self, vocab_size, dim_size):
-        super().__init__()
-        
-        self.embedding = nn.Embedding(num_embeddings=vocab_size, embedding_dim=dim_size)
-        self.positional_encoding = None
-
-class AttentionBlock(nn.Module):
-
-    def __init__(self):
-        super().__init__()
-        pass
-
-class TransformerBlock(nn.Module):
+class Transformer(nn.Module):
     
-    def __init__(self):
-        super().__init__()
-        pass
-
-
-class LanguageModel(nn.Module):
-    
-    def __init__(self, vocab_size, dim_size):
+    def __init__(self, vocab_size, d_model, n_blocks, max_seq_len):
         super().__init__()
 
-        self.encoding_layer = EncodingLayer(vocab_size=vocab_size, dim_size=dim_size)
+        self.embedding_layer = EmbeddingLayer(vocab_size, d_model, max_seq_len)
+        self.blocks = [TransformerBlock(d_model) for _ in range(n_blocks)]
+        self.layer_norm = nn.LayerNorm(d_model)
+        self.linear = nn.Linear(d_model, vocab_size)
 
-        self.block1 = TransformerBlock()
-        self.block2 = TransformerBlock()
-        self.block3 = TransformerBlock()
-        self.block4 = TransformerBlock()
-        self.block5 = TransformerBlock()
-        self.block6 = TransformerBlock()
-
-        self.norm = nn.LayerNorm()
-        self.linear = nn.Linear()
-        self.softmax = nn.Softmax()
 
     def forward(self, X):
-        pass
+        
+        embeddings = self.embedding_layer(X)
 
-    def backward(self):
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+        for block in self.blocks:
+            embeddings = block(embeddings)
 
+        norm_embeddings = self.layer_norm(embeddings)
 
-    def train(self, X, y):
-        pass
+        logits = self.linear(norm_embeddings)
 
+        return logits
+    
 
 if __name__ == "__main__":
-    model = LanguageModel()
-    loss = nn.MSELoss()
-    optimizer = optim.Adam(model.parameters())
+    vocab_size = 20
+    d_model = 4
+    n_blocks = 6
+    max_seq_len = 10
+
+    X = torch.tensor([3, 4, 5, 3, 1, 2, 3, 10]).view(1,-1)
+    
+    print(X.shape)
+    
+    transformer = Transformer(vocab_size=vocab_size, d_model=d_model, n_blocks=n_blocks, max_seq_len=max_seq_len)
+
+    print(transformer(X))
