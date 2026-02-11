@@ -1,4 +1,6 @@
 import re
+import torch
+import torch.nn.functional as F
 
 class Tokenizer:
 
@@ -22,8 +24,8 @@ class Tokenizer:
     
     def detokenize(self, ids):
         return [self.id_to_token[id] for id in ids]
-    
-    def num_tokens(self):
+
+    def vocab_size(self):
         return self.index
 
 
@@ -64,6 +66,17 @@ if __name__ == "__main__":
     '''
 
     tkns = tknizr.tokenize(text)
-    other_tkns =tknizr.tokenize(other_text)
+    other_tkns = tknizr.tokenize(other_text)
 
-    print(tknizr.id_to_token.values())
+    # print(tknizr.id_to_token.values())
+    
+    vocab_size = tknizr.vocab_size()
+    # print(vocab_size)
+    seq_len = 10
+
+    logits = torch.randint(0, 10, (1, seq_len, vocab_size)).float()
+
+    # print(logits)
+
+    tknizr.decode(logits)
+

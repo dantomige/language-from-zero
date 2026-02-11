@@ -16,7 +16,6 @@ class Transformer(nn.Module):
 
 
     def forward(self, X):
-        
         embeddings = self.embedding_layer(X)
 
         for block in self.blocks:
@@ -27,6 +26,9 @@ class Transformer(nn.Module):
         logits = self.linear(norm_embeddings)
 
         return logits
+    
+    def decode(self, logits):
+        return torch.argmax(logits, dim=-1)
     
 
 if __name__ == "__main__":
