@@ -1,8 +1,7 @@
 import torch
-import torch.utils.data
-from datasets import load_dataset
+from torch.utils.data import Dataset
 
-class LangaugeModelDataset(torch.utils.data):
+class LangaugeModelDataset(Dataset):
 
     def __init__(self, tokens, context_window):
         self.tokens = tokens
@@ -20,7 +19,4 @@ class LangaugeModelDataset(torch.utils.data):
 
 
 if __name__ == "__main__":
-    dataset = load_dataset("wikitext", "wikitext-2-raw-v1", split="train")
-    full_text = "\n".join(dataset['text'])
-
-    print(type(full_text))
+    pass
