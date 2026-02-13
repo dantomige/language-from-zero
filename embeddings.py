@@ -11,9 +11,9 @@ class EmbeddingLayer(nn.Module):
         self.d_model = d_model
         self.max_seq_len = max_seq_len
         self.word_embeddings = nn.Embedding(vocab_size, d_model)
-        self.positional_embeddings = self._generate_positional_embeddings(max_seq_len, d_model)
+        self._register_positional_embeddings(max_seq_len, d_model)
 
-    def _generate_positional_embeddings(self, max_seq_len, d_model):
+    def _register_positional_embeddings(self, max_seq_len, d_model):
         positional_embeddings = torch.zeros(max_seq_len, d_model)
         positions = torch.arange(0, max_seq_len).unsqueeze(1)
         trig_arguments_column_factors = 10000 ** (torch.arange(0, d_model, 2)/d_model)
@@ -26,7 +26,6 @@ class EmbeddingLayer(nn.Module):
 
         # print(positional_embeddings)
         self.register_buffer("positional_embeddings", positional_embeddings)
-        return positional_embeddings
 
     def forward(self, x):
         return self.word_embeddings(x) + self.positional_embeddings[:x.shape[1], :]
