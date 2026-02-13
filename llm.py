@@ -10,12 +10,21 @@ class Transformer(nn.Module):
         super().__init__()
 
         self.embedding_layer = EmbeddingLayer(vocab_size, d_model, max_seq_len)
-        self.blocks = [TransformerBlock(d_model) for _ in range(n_blocks)]
+        self.blocks = nn.ModuleList([TransformerBlock(d_model) for _ in range(n_blocks)])
         self.layer_norm = nn.LayerNorm(d_model)
         self.linear = nn.Linear(d_model, vocab_size)
 
 
     def forward(self, X):
+        """ Forward pass of transformer model. Takes a dataset
+        and predicts next word for each token.
+
+        Args:
+            X (torch.Tensor): dataset of size (batch_size, sequence_length)
+
+        Returns:
+            torch.Tensor: logits for each item token (batch_size, sequence_length, vocab_size)
+        """
         embeddings = self.embedding_layer(X)
 
         for block in self.blocks:
@@ -29,6 +38,17 @@ class Transformer(nn.Module):
     
     def decode(self, logits):
         return torch.argmax(logits, dim=-1)
+    
+    def train(self):
+        """Set model to train mode.
+        """
+        pass
+
+    def eval(self):
+        """Set model to eval mode
+        """
+        pass
+
     
 
 if __name__ == "__main__":
