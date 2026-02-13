@@ -22,7 +22,7 @@ class CausalSelfAttention(nn.Module):
 
         self_attention = Q @ K.transpose(-2, -1)
 
-        mask = torch.triu(torch.ones(num_tokens, num_tokens), diagonal=1).bool()
+        mask = torch.triu(torch.ones(num_tokens, num_tokens, device=x.device), diagonal=1).bool()
 
         # print(mask)
 
