@@ -4,10 +4,10 @@ import torch.nn.functional as F
 
 class Tokenizer:
 
-    def __init__(self):
-        self.token_to_id = {}
-        self.id_to_token = {}
-        self.index = 0
+    def __init__(self, special_tokens=None):
+        self.token_to_id = special_tokens if special_tokens is not None else {}
+        self.id_to_token = {token_id: special_token for special_token, token_id in special_tokens.items()}
+        self.index = len(special_tokens) if special_tokens is not None else 0
 
     def tokenize(self, text):
         tokens = re.findall(r'\d+|\w+|[^\w\s]', text)
