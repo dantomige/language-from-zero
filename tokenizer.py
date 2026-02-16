@@ -1,4 +1,5 @@
 import re
+import json
 import torch
 import torch.nn.functional as F
 
@@ -6,7 +7,7 @@ class Tokenizer:
 
     def __init__(self, special_tokens=None):
         self.token_to_id = special_tokens if special_tokens is not None else {}
-        self.id_to_token = {token_id: special_token for special_token, token_id in special_tokens.items()}
+        self.id_to_token = {token_id: special_token for special_token, token_id in special_tokens.items()} if special_tokens is not None else {}
         self.index = len(special_tokens) if special_tokens is not None else 0
 
     def tokenize(self, text):
@@ -22,11 +23,26 @@ class Tokenizer:
 
         return ids
     
+    def add_to_vocab(self, text):
+        pass
+
+    def update(self, token_to_id):
+        pass
+    
     def detokenize(self, ids):
         return [self.id_to_token[id] for id in ids]
 
     def vocab_size(self):
         return self.index
+    
+    def save_tokenizer(self, path):
+        data = {
+            "vocab_size": self.index,
+            "token_to_id": self.token_to_id
+        }
+
+        with open(path, "w") as f:
+            json.dump(data, f)
 
 
 if __name__ == "__main__":
