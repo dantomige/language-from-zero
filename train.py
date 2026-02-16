@@ -8,6 +8,7 @@ from tokenizer import Tokenizer
 from llm import Transformer
 from src.dataset import LangaugeModelDataset
 
+
 def train_transformer(model, dataloader, optimizer, criterion, device):
 
     model.train()
@@ -31,8 +32,6 @@ def train_transformer(model, dataloader, optimizer, criterion, device):
         print(f"Batch {batch_idx} with training loss: ", loss)
 
 
-
-
 def main():
     # hyperparameters/global parameters
     print("Hyperparameters")
@@ -45,11 +44,17 @@ def main():
     # load data from hugging face
     print("Loading dataset dataset ...")
     dataset = load_dataset("wikitext", "wikitext-2-raw-v1", split="train")
-    full_text = "\n".join(dataset['text'])
+    full_text = "\n".join(dataset["text"])
     print(type(full_text))
 
     # tokenize data and convert to tensor
     print("Tokenizing")
+    # special_tokens = {
+    #     "<PAD>": 0,
+    #     "<BOS>": 1,
+    #     "<EOS>": 2,
+    #     "<UNK>": 3,
+    #     }
     tokenizer = Tokenizer()
     tokens = tokenizer.tokenize(full_text)
     tokens_tensor = torch.tensor(tokens)
@@ -61,10 +66,16 @@ def main():
     print("Creating dataset and dataloader objects")
     dataset = LangaugeModelDataset(tokens=tokens_tensor, context_window=context_window)
     dataloader = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True)
+    print("Dataloader length: ", len(dataloader))
 
     # create model
     print("Creating model")
-    model = Transformer(vocab_size=vocab_size, d_model=d_model, n_blocks=n_blocks, max_seq_len=context_window)
+    model = Transformer(
+        vocab_size=vocab_size,
+        d_model=d_model,
+        n_blocks=n_blocks,
+        max_seq_len=context_window,
+    )
 
     # select optimizer, criterion
     print("Selecting optimizer and criteron")
@@ -75,7 +86,16 @@ def main():
     print("Training model ...")
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
     print(device)
-    train_transformer(model=model, dataloader=dataloader, optimizer=optimizer, criterion=criterion, device=device)
+    train_transformer(
+        model=model,
+        dataloader=dataloader,
+        optimizer=optimizer,
+        criterion=criterion,
+        device=device,
+    )
+
+    print("Saving model")
+    torch.save(model.state_dict(), "model_weights.pth")
 
 
 if __name__ == "__main__":
