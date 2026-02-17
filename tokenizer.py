@@ -3,42 +3,85 @@ import torch
 import torch.nn.functional as F
 
 class Tokenizer:
+    
+    DEFAULT_SPECIAL_TOKENS = ["<PAD>", "<UNK>", "<BOS>", "<EOS>"]
+    UNKNOWN_TOKEN = "<UNK>"
 
-    def __init__(self, special_tokens=None):
-        self.vocab_size = len(special_tokens) if special_tokens is not None else 0
-        self.token_to_id = special_tokens if special_tokens is not None else {}
-        self.id_to_token = {token_id: special_token for special_token, token_id in special_tokens.items()} if special_tokens is not None else {}
+    def __init__(self, special_tokens = None):
+        self.vocab_size = 0
+        self.token_to_id = {}
+        self.id_to_token = {}
 
-    def tokenize(self, text):
-        tokens = re.findall(r'\d+|\w+|[^\w\s]', text)
+        tokens_to_add = special_tokens if special_tokens is not None else self.DEFAULT_SPECIAL_TOKENS
+        self.special_tokens = tokens_to_add
+
+
+        for word in tokens_to_add:
+            self.add_to_vocab(word)
+
+    def tokenize(self, text, update_vocab=False):
+        """Takes raw text and produces numerical encoding of its tokens.
+
+        Args:
+            text (str): complete raw text
+            update_vocab (bool, optional): bool to update unknown words or use unknown token. Defaults to False.
+
+        Returns:
+            List[int]: ids for each token in text
+        """
+
+        tokens = self.segment(text)
+
         ids = []
         for token in tokens:
             if token not in self.token_to_id:
-                self.token_to_id[token] = self.vocab_size
-                self.id_to_token[self.vocab_size] = token
-                self.vocab_size += 1
-            
+                if not update_vocab:
+                    token = self.UNKNOWN_TOKEN
+                else:
+                    self.add_to_vocab(token)
+                    
             ids.append(self.token_to_id[token])
 
         return ids
     
-    def get_id(self, token):
+    def segment(self, text: str):
+        text = text.lower()
+        tokens = re.findall(r'\d+|\w+|[^\w\s]', text)
+        return tokens
+    
+    def get_id(self, token: str):
+        token = token.lower()
         return self.token_to_id.get(token, None)
 
     def get_token(self, id):
         return self.id_to_token.get(id, None)
     
-    def add_to_vocab(self, text):
-        pass
+    def add_to_vocab(self, word: str):
+        """Adds word to the vocab. Only changes vocabulary if word is not already in the vocabulary
 
-    def update(self, token_to_id):
-        pass
-    
+        Args:
+            word (str): word to add to vocab
+        """
+        if word not in self.special_tokens:
+            word = word.lower()
+        
+        if word in self.token_to_id:
+            return
+        
+        word_id = self.vocab_size
+        self.token_to_id[word] = word_id
+        self.id_to_token[word_id] = word
+        self.vocab_size += 1
+
+
     def detokenize(self, ids):
-        return [self.id_to_token[id] for id in ids]
-    
-    def state_dict(self):
-        pass
+        tokens = []
+        for id in ids:
+            token = self.get_token(id)
+            if token is None:
+                raise ValueError(f"All ids must be present in the tokenizer. {id} not present in tokenizer")
+            tokens.append(token)
+        return tokens
 
     def load_from_state_dict(self, state_dict):
         self.vocab_size, self.token_to_id, self.id_to_token = state_dict["vocab_size"], state_dict["token_to_id"], state_dict["id_to_token"]
