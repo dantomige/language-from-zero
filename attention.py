@@ -30,7 +30,7 @@ class CausalSelfAttention(nn.Module):
 
         # print(masked_self_attention)
 
-        weighted_attention = F.softmax(masked_self_attention, dim=-1)
+        weighted_attention = F.softmax(masked_self_attention, dim=-1) / (d_model ** 0.5)
 
         # print(weighted_attention)
 
