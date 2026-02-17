@@ -64,18 +64,21 @@ def main():
     # load data from hugging face
     print("Loading dataset dataset ...")
     dataset = load_dataset("wikitext", "wikitext-2-raw-v1", split="train")
+    print(type(dataset), len(dataset))
     full_text = "\n".join(dataset["text"])
-    print(type(full_text))
+
+    shuffled_dataset = dataset.shuffle(seed=17)
+    shuffled_full_text = "\n".join(shuffled_dataset["text"])
+
+    print(type(full_text), len(full_text))
+    print(type(shuffled_full_text), len(shuffled_full_text))
+
+    update_vocab_sample_size = 500_000
 
     # tokenize data and convert to tensor
     print("Tokenizing")
-    # special_tokens = {
-    #     "<PAD>": 0,
-    #     "<BOS>": 1,
-    #     "<EOS>": 2,
-    #     "<UNK>": 3,
-    #     }
     tokenizer = Tokenizer()
+    tokenizer.tokenize(shuffled_full_text[:update_vocab_sample_size], update_vocab=True)
     tokens = tokenizer.tokenize(full_text)
     tokens_tensor = torch.tensor(tokens)
     vocab_size = tokenizer.vocab_size
@@ -86,7 +89,7 @@ def main():
     print("Creating dataset and dataloader objects")
     dataset = LangaugeModelDataset(tokens=tokens_tensor, context_window=context_window)
     dataloader = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True)
-    num_datapoints_to_train = 1000
+    num_datapoints_to_train = 2000
     print("Dataloader length: ", len(dataloader))
 
     # create model
