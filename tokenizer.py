@@ -23,6 +23,12 @@ class Tokenizer:
 
         return ids
     
+    def get_id(self, token):
+        return self.token_to_id.get(token, None)
+
+    def get_token(self, id):
+        return self.id_to_token.get(id, None)
+    
     def add_to_vocab(self, text):
         pass
 
