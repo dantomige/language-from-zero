@@ -19,6 +19,10 @@ class Tokenizer:
         for word in tokens_to_add:
             self.add_to_vocab(word)
 
+    def check_representation(self):
+        # ensure ids are always ints
+        pass
+
     def tokenize(self, text, update_vocab=False):
         """Takes raw text and produces numerical encoding of its tokens.
 
@@ -50,7 +54,8 @@ class Tokenizer:
         return tokens
     
     def get_id(self, token: str):
-        token = token.lower()
+        if token not in self.special_tokens:
+            token = token.lower()
         return self.token_to_id.get(token, None)
 
     def get_token(self, id):
@@ -131,18 +136,8 @@ if __name__ == "__main__":
     He hesitated, staring at the sign, wondering if this was the day everything would change.
     '''
 
-    tkns = tknizr.tokenize(text)
+    tkns = tknizr.tokenize(text, update_vocab=True)
     other_tkns = tknizr.tokenize(other_text)
 
-    # print(tknizr.id_to_token.values())
-    
-    vocab_size = tknizr.vocab_size()
-    # print(vocab_size)
-    seq_len = 10
-
-    logits = torch.randint(0, 10, (1, seq_len, vocab_size)).float()
-
-    # print(logits)
-
-    tknizr.decode(logits)
+    print(tknizr.id_to_token)
 
