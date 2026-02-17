@@ -54,7 +54,7 @@ def load_inference_model(filepath):
 
 class ModelInterface:
 
-    def __init__(self, inference_model):
+    def __init__(self, inference_model: Inference):
         self.inference_model = inference_model
 
     def predict(self, query):
