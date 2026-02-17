@@ -66,7 +66,8 @@ def process(user_input):
 
 
 def main():
-    FILEPATH = ""
+    FILEPATH = "checkpoint_2026-02-17 01:46:08.193650+00:00.pth"
+
     inference_model = load_inference_model(FILEPATH)
 
     model_interface = ModelInterface(inference_model=inference_model)
