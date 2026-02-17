@@ -8,9 +8,9 @@ from inference import Inference
 
 def load_tokenizer(checkpoint):
 
-    tokenizer_file = checkpoint["tokenizer_file"]
-    with open(tokenizer_file, "r") as f:
-        data = json.load(f)
+    tokenizer_filename = checkpoint["tokenizer_filename"]
+    with open(tokenizer_filename, "r") as f:
+        tokenizer_state_dict = json.load(f)
 
     tokenizer = Tokenizer()
     tokenizer.load_from_state_dict(tokenizer_state_dict)
