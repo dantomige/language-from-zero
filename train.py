@@ -1,16 +1,24 @@
 import torch
 import torch.nn as nn
+from typing import Optional
 from utils import save_as_json
 from datetime import datetime, timezone
 from torch.utils.data import DataLoader
-from torch.optim import Adam
+from torch.optim import Optimizer, Adam
 from datasets import load_dataset
 from tokenizer import Tokenizer
 from llm import Transformer
 from src.dataset import LangaugeModelDataset
 
 
-def train_transformer(model, dataloader, optimizer, criterion, device, num_datapoints_to_train = None):
+def train_transformer(
+    model: Transformer,
+    dataloader: DataLoader,
+    optimizer: Optimizer,
+    criterion: nn.Module,
+    device: torch.device,
+    num_datapoints_to_train: Optional[int] = None,
+):
 
     model.train()
     model.to(device)
@@ -19,12 +27,17 @@ def train_transformer(model, dataloader, optimizer, criterion, device, num_datap
 
     for batch_idx, (X, y) in enumerate(dataloader):
         num_trained = num_examples_per_batch * batch_idx
-        if num_datapoints_to_train is not None and num_trained > num_datapoints_to_train:
+        if (
+            num_datapoints_to_train is not None
+            and num_trained > num_datapoints_to_train
+        ):
             break
 
-        X, y = X.to(device), y.to(device)
         optimizer.zero_grad()
-        yhat = model(X)
+
+        X: torch.Tensor = X.to(device)
+        y: torch.Tensor = y.to(device)
+        yhat: torch.Tensor = model(X)
 
         batch_size, sequence_length = y.shape
         y = y.view(batch_size * sequence_length)
@@ -32,7 +45,7 @@ def train_transformer(model, dataloader, optimizer, criterion, device, num_datap
         batch_size, sequence_length, vocab_probs = yhat.shape
         yhat = yhat.view(batch_size * sequence_length, vocab_probs)
 
-        loss = criterion(yhat, y)
+        loss: torch.Tensor = criterion(yhat, y)
         loss.backward()
         optimizer.step()
 
@@ -100,7 +113,7 @@ def main():
         optimizer=optimizer,
         criterion=criterion,
         device=device,
-        num_datapoints_to_train=num_datapoints_to_train
+        num_datapoints_to_train=num_datapoints_to_train,
     )
 
     print("Saving model")
