@@ -6,18 +6,18 @@ import torch.nn.functional as F
 class Tokenizer:
 
     def __init__(self, special_tokens=None):
+        self.vocab_size = len(special_tokens) if special_tokens is not None else 0
         self.token_to_id = special_tokens if special_tokens is not None else {}
         self.id_to_token = {token_id: special_token for special_token, token_id in special_tokens.items()} if special_tokens is not None else {}
-        self.index = len(special_tokens) if special_tokens is not None else 0
 
     def tokenize(self, text):
         tokens = re.findall(r'\d+|\w+|[^\w\s]', text)
         ids = []
         for token in tokens:
             if token not in self.token_to_id:
-                self.token_to_id[token] = self.index
-                self.id_to_token[self.index] = token
-                self.index += 1
+                self.token_to_id[token] = self.vocab_size
+                self.id_to_token[self.vocab_size] = token
+                self.vocab_size += 1
             
             ids.append(self.token_to_id[token])
 
@@ -31,18 +31,20 @@ class Tokenizer:
     
     def detokenize(self, ids):
         return [self.id_to_token[id] for id in ids]
-
-    def vocab_size(self):
-        return self.index
     
-    def save_tokenizer(self, path):
-        data = {
-            "vocab_size": self.index,
-            "token_to_id": self.token_to_id
-        }
+    def state_dict(self):
+        pass
 
-        with open(path, "w") as f:
-            json.dump(data, f)
+    def load_from_state_dict(self, state_dict):
+        self.vocab_size, self.token_to_id, self.id_to_token = state_dict["vocab_size"], state_dict["token_to_id"], state_dict["id_to_token"]
+
+    def state_dict(self):
+        state_dict = {
+            "vocab_size": self.vocab_size,
+            "token_to_id": self.token_to_id,
+            "id_to_token": self.id_to_token
+        }
+        return state_dict
 
 
 if __name__ == "__main__":
