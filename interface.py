@@ -12,8 +12,9 @@ def load_tokenizer(checkpoint):
     with open(tokenizer_file, "r") as f:
         data = json.load(f)
 
-    token_to_id = data["token_to_id"]
-    tokenizer = Tokenizer.update(token_to_id=token_to_id)
+    tokenizer = Tokenizer()
+    tokenizer.load_from_state_dict(tokenizer_state_dict)
+
     return tokenizer
 
 
@@ -25,12 +26,17 @@ def load_llm_model(checkpoint):
         checkpoint["n_blocks"],
         checkpoint["context_window"],
     )
+
+    model_state_dict = checkpoint["model_state_dict"]
+
     llm_model = Transformer(
         vocab_size=vocab_size,
         d_model=d_model,
         n_blocks=n_blocks,
         max_seq_len=context_window,
     )
+    llm_model.load_state_dict(model_state_dict)
+
     return llm_model
 
 
@@ -62,6 +68,7 @@ def process(user_input):
 def main():
     FILEPATH = ""
     inference_model = load_inference_model(FILEPATH)
+
     model_interface = ModelInterface(inference_model=inference_model)
 
     interface = gr.Interface(fn=model_interface.predict, inputs="text", outputs="text")
