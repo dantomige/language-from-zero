@@ -61,10 +61,6 @@ class ModelInterface:
         return self.inference_model.response(query)
 
 
-def process(user_input):
-    return f"Model processed: {user_input}"
-
-
 def main():
     FILEPATH = "checkpoint_2026-02-17 01:46:08.193650+00:00.pth"
 
