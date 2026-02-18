@@ -6,16 +6,17 @@ from embeddings import EmbeddingLayer
 
 class Transformer(nn.Module):
     
-    def __init__(self, vocab_size, d_model, n_blocks, max_seq_len):
+    def __init__(self, vocab_size, d_model, n_blocks, n_heads, max_seq_len):
         super().__init__()
 
         self.vocab_size = vocab_size
         self.d_model = d_model
         self.n_blocks = n_blocks
+        self.n_heads = n_heads
         self.context_window = max_seq_len
 
         self.embedding_layer = EmbeddingLayer(vocab_size, d_model, max_seq_len)
-        self.blocks = nn.ModuleList([TransformerBlock(d_model) for _ in range(n_blocks)])
+        self.blocks = nn.ModuleList([TransformerBlock(d_model, n_heads) for _ in range(n_blocks)])
         self.layer_norm = nn.LayerNorm(d_model)
         self.linear = nn.Linear(d_model, vocab_size)
 
