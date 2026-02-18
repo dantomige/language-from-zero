@@ -2,7 +2,7 @@ import json
 import torch
 import gradio as gr
 from tokenizer import Tokenizer
-from llm import Transformer
+from src.model.llm import Transformer
 from inference import Inference
 
 def normalize(tokenizer_state_dict):
