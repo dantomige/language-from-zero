@@ -1,5 +1,5 @@
 import torch
-from llm import Transformer
+from src.model.llm import Transformer
 from tokenizer import Tokenizer
 
 
