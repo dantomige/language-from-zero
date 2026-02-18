@@ -91,7 +91,7 @@ class CausalMultiHeadSelfAttention(nn.Module):
         multihead_weighted_values = multihead_weighted_attention @ V_multihead
 
         # concat
-        weighted_values_concat = multihead_weighted_values.tranpose(1, 2).contiguous().view(batch_size, num_tokens, d_model)
+        weighted_values_concat = multihead_weighted_values.transpose(1, 2).contiguous().view(batch_size, num_tokens, d_model)
 
         # linear pass
         return self.W_O(weighted_values_concat)
