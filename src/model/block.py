@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from attention import CausalMultiHeadSelfAttention
+from src.model.attention import CausalMultiHeadSelfAttention
 
 
 class TransformerBlock(nn.Module):
