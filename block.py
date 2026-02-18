@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from attention import CausalSelfAttention
+from attention import CausalMultiHeadSelfAttention
 
 
 class TransformerBlock(nn.Module):
@@ -11,7 +11,7 @@ class TransformerBlock(nn.Module):
 
         self.d_model = d_model
         self.first_norm_layer = nn.LayerNorm(d_model)
-        self.attention_layer = CausalSelfAttention(d_model)
+        self.attention_layer = CausalMultiHeadSelfAttention(d_model)
         self.second_norm_layer = nn.LayerNorm(d_model)
         self.FFNN_layer1 = nn.Linear(in_features=d_model, out_features=d_model*4)
         self.FFNN_layer2 = nn.Linear(in_features=d_model*4, out_features=d_model)
