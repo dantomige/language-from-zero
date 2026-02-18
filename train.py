@@ -59,6 +59,7 @@ def main():
     context_window = 128
     batch_size = 8
     n_blocks = 6
+    n_heads = 8
     print(d_model, context_window)
 
     # load data from hugging face
@@ -130,6 +131,7 @@ def main():
         "vocab_size": vocab_size,
         "d_model": d_model,
         "n_blocks": n_blocks,
+        "n_heads": n_heads,
         "context_window": context_window,
         "utc_time": utc_time_saved,
         "tokenizer_filename": tokenizer_filename,

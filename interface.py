@@ -26,10 +26,11 @@ def load_tokenizer(checkpoint):
 
 def load_llm_model(checkpoint):
 
-    vocab_size, d_model, n_blocks, context_window = (
+    vocab_size, d_model, n_blocks, n_heads, context_window = (
         checkpoint["vocab_size"],
         checkpoint["d_model"],
         checkpoint["n_blocks"],
+        checkpoint["n_heads"],
         checkpoint["context_window"],
     )
 
@@ -39,6 +40,7 @@ def load_llm_model(checkpoint):
         vocab_size=vocab_size,
         d_model=d_model,
         n_blocks=n_blocks,
+        n_heads=n_heads,
         max_seq_len=context_window,
     )
     llm_model.load_state_dict(model_state_dict)
@@ -68,9 +70,10 @@ class ModelInterface:
 
 
 def main():
-    FILENAME = "checkpoint_2026-02-17 06:46:38.139213+00:00.pth"
+    FILENAME = "checkpoint_2026-02-18 00:14:14.775230+00:00.pth"
 
     inference_model = load_inference_model(FILENAME)
+    # print(inference_model.tokenizer.token_to_id)
 
     model_interface = ModelInterface(inference_model=inference_model)
 
