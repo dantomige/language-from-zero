@@ -6,12 +6,12 @@ from attention import CausalMultiHeadSelfAttention
 
 class TransformerBlock(nn.Module):
 
-    def __init__(self, d_model):
+    def __init__(self, d_model, n_heads):
         super().__init__()
 
         self.d_model = d_model
         self.first_norm_layer = nn.LayerNorm(d_model)
-        self.attention_layer = CausalMultiHeadSelfAttention(d_model)
+        self.attention_layer = CausalMultiHeadSelfAttention(d_model, n_heads)
         self.second_norm_layer = nn.LayerNorm(d_model)
         self.FFNN_layer1 = nn.Linear(in_features=d_model, out_features=d_model*4)
         self.FFNN_layer2 = nn.Linear(in_features=d_model*4, out_features=d_model)
