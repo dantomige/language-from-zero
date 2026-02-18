@@ -8,7 +8,7 @@ from torch.optim import Optimizer, Adam
 from datasets import load_dataset
 from tokenizer import Tokenizer
 from llm import Transformer
-from src.dataset import LangaugeModelDataset
+from src.data.dataset import LangaugeModelDataset
 
 
 def train_transformer(
