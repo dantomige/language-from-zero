@@ -18,7 +18,8 @@ class Inference:
 
         for _iter in range(max_response_tokens):
 
-            logits = self.model(ids_tensor)
+            logits = self.model(ids_in_context_window)
+
             guesses = self.model.decode(logits)
 
             new_token_id = guesses[0, -1]
