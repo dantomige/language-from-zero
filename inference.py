@@ -9,7 +9,7 @@ class Inference:
         self.model = model
         self.tokenizer = tokenizer
 
-    def response(self, query, max_response_tokens):
+    def response(self, query, max_response_tokens, temperature = 1):
         ids = self.tokenizer.tokenize(query)
         ids_tensor = torch.tensor([ids])
         ids_in_context_window = ids_tensor[-self.model.context_window:]
@@ -18,7 +18,7 @@ class Inference:
 
         for _iter in range(max_response_tokens):
 
-            logits = self.model(ids_in_context_window)
+            logits = self.model(ids_in_context_window) / temperature
 
             guesses = self.model.decode(logits)
 
