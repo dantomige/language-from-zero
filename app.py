@@ -70,7 +70,7 @@ class ModelInterface:
 
 
 def main():
-    FILENAME = "checkpoint_2026-02-18 00:14:14.775230+00:00.pth"
+    FILENAME = "checkpoint_2026-02-18 18:54:19.158793+00:00.pth"
 
     inference_model = load_inference_model(FILENAME)
     # print(inference_model.tokenizer.token_to_id)
