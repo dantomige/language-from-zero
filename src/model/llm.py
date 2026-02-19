@@ -7,7 +7,6 @@ from src.model.embeddings import EmbeddingLayer
 from src.config.model import ModelConfig
 import json
 from pathlib import Path
-from typing import Union
 
 
 class Transformer(nn.Module):
@@ -20,7 +19,7 @@ class Transformer(nn.Module):
         self.vocab_size = config.vocab_size
         self.d_model = config.d_model
         self.n_blocks = config.n_blocks
-        self.n_heads = config.num_heads
+        self.n_heads = config.n_heads
         self.context_window = config.context_window
 
         self.embedding_layer = EmbeddingLayer(
