@@ -1,6 +1,6 @@
 import torch
 from src.model.llm import Transformer
-from tokenizer import Tokenizer
+from src.tokenizer import Tokenizer
 
 
 class Inference:

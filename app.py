@@ -1,7 +1,7 @@
 import json
 import torch
 import gradio as gr
-from tokenizer import Tokenizer
+from src.tokenizer import Tokenizer
 from src.model.llm import Transformer
 from inference import Inference
 
@@ -70,10 +70,9 @@ class ModelInterface:
 
 
 def main():
-    FILENAME = "checkpoint_2026-02-18 18:54:19.158793+00:00.pth"
+    FILENAME = "src/checkpoints/head.pth"
 
     inference_model = load_inference_model(FILENAME)
-    # print(inference_model.tokenizer.token_to_id)
 
     model_interface = ModelInterface(inference_model=inference_model)
 

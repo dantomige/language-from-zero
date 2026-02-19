@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from torch.utils.data import DataLoader
 from torch.optim import Optimizer, Adam
 from datasets import load_dataset
-from tokenizer import Tokenizer
+from src.tokenizer import Tokenizer
 from src.model.llm import Transformer
 from src.data.dataset import LangaugeModelDataset
 
