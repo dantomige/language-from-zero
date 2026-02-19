@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from typing import Optional
-from utils import save_as_json
+from src.utils import save_as_json
 from datetime import datetime, timezone
 from torch.utils.data import DataLoader
 from torch.optim import Optimizer, Adam
