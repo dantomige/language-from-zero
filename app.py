@@ -1,6 +1,7 @@
 import json
 import torch
 import gradio as gr
+from src.config.model import ModelConfig
 from src.tokenizer import Tokenizer
 from src.model.llm import Transformer
 from inference import Inference
@@ -42,13 +43,15 @@ def load_llm_model(checkpoint):
 
     model_state_dict = checkpoint["model_state_dict"]
 
-    llm_model = Transformer(
+    config = ModelConfig(
         vocab_size=vocab_size,
         d_model=d_model,
         n_blocks=n_blocks,
         n_heads=n_heads,
         context_window=context_window,
     )
+
+    llm_model = Transformer(config=config)
     llm_model.load_state_dict(model_state_dict)
 
     return llm_model

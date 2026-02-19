@@ -7,6 +7,7 @@ from torch.optim import Optimizer, Adam
 from datasets import load_dataset
 from src.utils import save_as_json
 from src.tokenizer import Tokenizer
+from src.config.model import ModelConfig
 from src.model.llm import Transformer
 from src.data.dataset import LangaugeModelDataset
 
@@ -135,13 +136,14 @@ def main():
 
     # create model
     print("Creating model")
-    model = Transformer(
+    config = ModelConfig(
         vocab_size=vocab_size,
         d_model=d_model,
         n_blocks=n_blocks,
         n_heads=n_heads,
         context_window=context_window,
     )
+    model = Transformer(config=config)
 
     # select optimizer, criterion
     print("Selecting optimizer and criterion")

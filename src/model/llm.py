@@ -3,25 +3,33 @@ import torch.nn as nn
 import torch.nn.functional as F
 from src.model.block import TransformerBlock
 from src.model.embeddings import EmbeddingLayer
+from src.config.model import ModelConfig
+import json
+from pathlib import Path
+from typing import Union
 
 
 class Transformer(nn.Module):
 
-    def __init__(self, vocab_size: int, d_model: int, n_blocks: int, n_heads: int, context_window: int):
+    def __init__(self, config: ModelConfig):
         super().__init__()
 
-        self.vocab_size = vocab_size
-        self.d_model = d_model
-        self.n_blocks = n_blocks
-        self.n_heads = n_heads
-        self.context_window = context_window
+        self.config = config
 
-        self.embedding_layer = EmbeddingLayer(vocab_size, d_model, context_window)
-        self.blocks = nn.ModuleList(
-            [TransformerBlock(d_model, n_heads) for _ in range(n_blocks)]
+        self.vocab_size = config.vocab_size
+        self.d_model = config.d_model
+        self.n_blocks = config.n_blocks
+        self.n_heads = config.num_heads
+        self.context_window = config.context_window
+
+        self.embedding_layer = EmbeddingLayer(
+            self.vocab_size, self.d_model, self.context_window
         )
-        self.layer_norm = nn.LayerNorm(d_model)
-        self.linear = nn.Linear(d_model, vocab_size)
+        self.blocks = nn.ModuleList(
+            [TransformerBlock(self.d_model, self.n_heads) for _ in range(self.n_blocks)]
+        )
+        self.layer_norm = nn.LayerNorm(self.d_model)
+        self.linear = nn.Linear(self.d_model, self.vocab_size)
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
         """Forward pass of transformer model. Takes a dataset
