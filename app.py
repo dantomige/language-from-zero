@@ -5,6 +5,7 @@ from src.config.model import ModelConfig
 from src.tokenizer import Tokenizer
 from src.model.llm import Transformer
 from inference import Inference
+from src.utils.checkpoint import CheckpointManager
 
 
 def normalize(tokenizer_state_dict):
@@ -18,7 +19,7 @@ def normalize(tokenizer_state_dict):
     return tokenizer_state_dict
 
 
-def load_tokenizer(checkpoint, path_to_file = ""):
+def load_tokenizer(checkpoint, path_to_file=""):
 
     tokenizer_filename = checkpoint["tokenizer_filename"]
     with open(path_to_file + tokenizer_filename, "r") as f:
@@ -26,7 +27,9 @@ def load_tokenizer(checkpoint, path_to_file = ""):
 
     tokenizer_state_dict = normalize(tokenizer_state_dict)
     tokenizer = Tokenizer()
-    tokenizer.load_from_state_dict(tokenizer_state_dict)
+    tokenizer.id_to_token = tokenizer_state_dict["id_to_token"]
+    tokenizer.token_to_id = tokenizer_state_dict["token_to_id"]
+    tokenizer.vocab_size = tokenizer_state_dict["vocab_size"]
 
     return tokenizer
 
@@ -57,7 +60,7 @@ def load_llm_model(checkpoint):
     return llm_model
 
 
-def load_inference_model(filename, path_to_file = ""):
+def load_inference_model(filename, path_to_file=""):
 
     checkpoint = torch.load(path_to_file + filename)
 
@@ -92,4 +95,25 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    filename = "head.pth"
+
+    inference_model = load_inference_model(filename, path_to_file="src/checkpoints/")
+
+    model = inference_model.model
+    config = model.config
+    tokenizer = inference_model.tokenizer
+
+    checkpoint_dir = "src/checkpoints/"
+    experiment_folder_name = "head"
+
+    checkpoint_manager = CheckpointManager(checkpoint_dir=checkpoint_dir)
+
+    checkpoint_manager.save(
+        experiment_folder_name=experiment_folder_name,
+        model=model,
+        tokenizer=tokenizer,
+        config=config,
+    )
+
+    
