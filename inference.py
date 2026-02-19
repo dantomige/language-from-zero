@@ -9,6 +9,16 @@ class Inference:
         self.tokenizer = tokenizer
 
     def response(self, query: str, max_response_tokens: int, temperature: float = 1.0) -> str:
+        """Given a query generates a response by predicting the next token until max_response_tokens is reached.
+
+        Args:
+            query (str): query to generate response for
+            max_response_tokens (int): maximum number of tokens to generate in response
+            temperature (float, optional): controls randomness of predictions. Defaults to 1.0.
+
+        Returns:
+            str: generated response
+        """
         ids = self.tokenizer.tokenize(query)
         ids_tensor = torch.tensor([ids])
         ids_in_context_window = ids_tensor[-self.model.context_window :]
