@@ -1,12 +1,11 @@
 import torch
 import torch.nn as nn
-
 from src.model.attention import CausalMultiHeadSelfAttention
 
 
 class TransformerBlock(nn.Module):
 
-    def __init__(self, d_model, n_heads):
+    def __init__(self, d_model: int, n_heads: int):
         super().__init__()
 
         self.d_model = d_model
@@ -16,11 +15,11 @@ class TransformerBlock(nn.Module):
         self.FFNN_layer1 = nn.Linear(in_features=d_model, out_features=d_model * 4)
         self.FFNN_layer2 = nn.Linear(in_features=d_model * 4, out_features=d_model)
 
-    def forward(self, x):
+    def forward(self, X: torch.Tensor) -> torch.Tensor:
 
-        norm_x = self.first_norm_layer(x)
+        norm_x = self.first_norm_layer(X)
         weighted_values = self.attention_layer(norm_x)
-        norm_values = self.second_norm_layer(weighted_values + x)  # residual connection
+        norm_values = self.second_norm_layer(weighted_values + X)  # residual connection
         ffnn_out = self.FFNN_layer2(self.FFNN_layer1(norm_values))
 
         return ffnn_out + norm_values  # residual connection

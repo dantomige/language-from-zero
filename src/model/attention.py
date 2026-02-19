@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 
 class CausalSelfAttention(nn.Module):
-    def __init__(self, d_model, bias=False):
+    def __init__(self, d_model: int, bias: bool = False):
         super().__init__()
 
         self.d_model = d_model
@@ -13,19 +13,19 @@ class CausalSelfAttention(nn.Module):
         self.W_K = nn.Linear(d_model, d_model, bias=bias)
         self.W_V = nn.Linear(d_model, d_model, bias=bias)
 
-    def forward(self, x):
-        batch, num_tokens, d_model = x.shape
+    def forward(self, X: torch.Tensor) -> torch.Tensor:
+        batch, num_tokens, d_model = X.shape
 
         # print(X.shape)
 
-        Q, K, V = self.W_Q(x), self.W_K(x), self.W_V(x)
+        Q, K, V = self.W_Q(X), self.W_K(X), self.W_V(X)
 
         self_attention = Q @ K.transpose(-2, -1) / (d_model**0.5)
 
         mask = torch.triu(
-            torch.ones(num_tokens, num_tokens, device=x.device), diagonal=1
+            torch.ones(num_tokens, num_tokens, device=X.device), diagonal=1
         ).bool()
-        mask = mask.to(x.device)
+        mask = mask.to(X.device)
 
         # print(mask)
 
@@ -45,7 +45,7 @@ class CausalSelfAttention(nn.Module):
 
 
 class CausalMultiHeadSelfAttention(nn.Module):
-    def __init__(self, d_model, num_heads, bias=False):
+    def __init__(self, d_model: int, num_heads: int, bias: bool = False):
         super().__init__()
 
         if d_model % num_heads != 0:
@@ -64,7 +64,7 @@ class CausalMultiHeadSelfAttention(nn.Module):
 
         nn.ModuleList
 
-    def forward(self, X):
+    def forward(self, X: torch.Tensor) -> torch.Tensor:
         batch_size, num_tokens, d_model = X.shape
 
         # get query, key, value

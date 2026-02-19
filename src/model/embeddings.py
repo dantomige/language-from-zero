@@ -4,7 +4,7 @@ import torch.nn as nn
 
 class EmbeddingLayer(nn.Module):
 
-    def __init__(self, vocab_size, d_model, context_window):
+    def __init__(self, vocab_size: int, d_model: int, context_window: int):
         super().__init__()
 
         self.vocab_size = vocab_size
@@ -13,7 +13,7 @@ class EmbeddingLayer(nn.Module):
         self.word_embeddings = nn.Embedding(vocab_size, d_model)
         self._register_positional_embeddings(context_window, d_model)
 
-    def _register_positional_embeddings(self, context_window, d_model):
+    def _register_positional_embeddings(self, context_window: int, d_model: int):
         positional_embeddings = torch.zeros(context_window, d_model)
         positions = torch.arange(0, context_window).unsqueeze(1)
         trig_arguments_column_factors = 10000 ** (torch.arange(0, d_model, 2) / d_model)
@@ -31,8 +31,8 @@ class EmbeddingLayer(nn.Module):
         # print(positional_embeddings)
         self.register_buffer("positional_embeddings", positional_embeddings)
 
-    def forward(self, x):
-        return self.word_embeddings(x) + self.positional_embeddings[: x.shape[1], :]
+    def forward(self, X: torch.Tensor) -> torch.Tensor:
+        return self.word_embeddings(X) + self.positional_embeddings[: X.shape[1], :]
 
 
 if __name__ == "__main__":

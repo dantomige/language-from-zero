@@ -7,7 +7,7 @@ from src.model.embeddings import EmbeddingLayer
 
 class Transformer(nn.Module):
 
-    def __init__(self, vocab_size, d_model, n_blocks, n_heads, context_window):
+    def __init__(self, vocab_size: int, d_model: int, n_blocks: int, n_heads: int, context_window: int):
         super().__init__()
 
         self.vocab_size = vocab_size
@@ -23,7 +23,7 @@ class Transformer(nn.Module):
         self.layer_norm = nn.LayerNorm(d_model)
         self.linear = nn.Linear(d_model, vocab_size)
 
-    def forward(self, X):
+    def forward(self, X: torch.Tensor) -> torch.Tensor:
         """Forward pass of transformer model. Takes a dataset
         and predicts next word for each token.
 
