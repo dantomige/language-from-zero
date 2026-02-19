@@ -2,14 +2,13 @@ import torch
 from src.model.llm import Transformer
 from src.tokenizer import Tokenizer
 
-
 class Inference:
 
     def __init__(self, model: Transformer, tokenizer: Tokenizer):
         self.model = model
         self.tokenizer = tokenizer
 
-    def response(self, query, max_response_tokens, temperature=1):
+    def response(self, query: str, max_response_tokens: int, temperature: float = 1.0) -> str:
         ids = self.tokenizer.tokenize(query)
         ids_tensor = torch.tensor([ids])
         ids_in_context_window = ids_tensor[-self.model.context_window :]
@@ -71,10 +70,10 @@ class Inference:
     #     response = self.tokenizer.detokenize(generated_response_token_ids)
     #     return self.format(response)
 
-    def generate_next_token(self, ids_tensor):
-        pass
-
-    def format(self, response):
+    def generate_next_token(self, ids_tensor: torch.Tensor, temperature: float = 1.0) -> int:
+        raise NotImplementedError
+    
+    def format(self, response: list[str]) -> str:
         return " ".join(response)
 
 
