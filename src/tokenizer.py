@@ -1,7 +1,7 @@
 import re
 import torch
 import torch.nn.functional as F
-from typing import Optional, List, Dict
+from typing import Optional
 
 
 class Tokenizer:
@@ -9,7 +9,7 @@ class Tokenizer:
     DEFAULT_SPECIAL_TOKENS = ["<PAD>", "<UNK>", "<BOS>", "<EOS>"]
     UNKNOWN_TOKEN = "<UNK>"
 
-    def __init__(self, special_tokens: Optional[List[str]] = None):
+    def __init__(self, special_tokens: Optional[list[str]] = None):
         self.vocab_size = 0
         self.token_to_id = {}
         self.id_to_token = {}
@@ -28,7 +28,7 @@ class Tokenizer:
         # ensure ids are always ints
         pass
 
-    def tokenize(self, text: str, update_vocab: bool = False) -> List[int]:
+    def tokenize(self, text: str, update_vocab: bool = False) -> list[int]:
         """Takes raw text and produces numerical encoding of its tokens.
 
         Args:
@@ -36,7 +36,7 @@ class Tokenizer:
             update_vocab (bool, optional): bool to update unknown words or use unknown token. Defaults to False.
 
         Returns:
-            List[int]: ids for each token in text
+            list[int]: ids for each token in text
         """
 
         tokens = self.segment(text)
@@ -53,7 +53,7 @@ class Tokenizer:
 
         return ids
 
-    def segment(self, text: str) -> List[str]:
+    def segment(self, text: str) -> list[str]:
         text = text.lower()
         tokens = re.findall(r"\d+|\w+|[^\w\s]", text)
         return tokens
@@ -83,7 +83,7 @@ class Tokenizer:
         self.id_to_token[word_id] = word
         self.vocab_size += 1
 
-    def detokenize(self, ids: List[int]) -> List[str]:
+    def detokenize(self, ids: list[int]) -> list[str]:
         tokens = []
         for id in ids:
             token = self.get_token(id)
