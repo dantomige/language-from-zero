@@ -147,7 +147,10 @@ class Tokenizer:
         tokenizer = cls()
         tokenizer.vocab_size = state_dict["vocab_size"]
         tokenizer.token_to_id = state_dict["token_to_id"]
-        tokenizer.id_to_token = state_dict["id_to_token"]
+        tokenizer.id_to_token = {
+            int(token_id): token
+            for token_id, token in state_dict["id_to_token"].items()
+        }
         return tokenizer
 
     def state_dict(self) -> dict:
