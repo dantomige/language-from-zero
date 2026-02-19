@@ -1,12 +1,35 @@
+from __future__ import annotations
 import torch
+from pathlib import Path
 from src.model.llm import Transformer
 from src.tokenizer import Tokenizer
+from src.utils.checkpoint import CheckpointManager
 
 class Inference:
 
     def __init__(self, model: Transformer, tokenizer: Tokenizer):
         self.model = model
         self.tokenizer = tokenizer
+
+    @classmethod
+    def from_experiment(cls, checkpoint_dir: str | Path, experiment_folder_name: str) -> Inference:
+        """ Loads the model and tokenizer from a given experiment folder in the checkpoints directory and returns an Inference object.
+
+        Args:
+            checkpoint_dir (str | Path): path to checkpoints directory
+            experiment_folder_name (str): name of experiment folder in checkpoints directory to load model and tokenizer from
+
+        Returns:
+            Inference: Inference object with model and tokenizer loaded from given experiment folder
+        """
+
+        checkpoint_manager = CheckpointManager(checkpoint_dir=checkpoint_dir)
+
+        bundle = checkpoint_manager.load(experiment_folder_name=experiment_folder_name)
+        
+        inference_model = cls(model = bundle.model, tokenizer=bundle.tokenizer)
+
+        return inference_model
 
     def response(self, query: str, max_response_tokens: int, temperature: float = 1.0) -> str:
         """Given a query generates a response by predicting the next token until max_response_tokens is reached.
