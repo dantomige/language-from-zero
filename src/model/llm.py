@@ -6,16 +6,16 @@ from src.model.embeddings import EmbeddingLayer
 
 class Transformer(nn.Module):
     
-    def __init__(self, vocab_size, d_model, n_blocks, n_heads, max_seq_len):
+    def __init__(self, vocab_size, d_model, n_blocks, n_heads, context_window):
         super().__init__()
 
         self.vocab_size = vocab_size
         self.d_model = d_model
         self.n_blocks = n_blocks
         self.n_heads = n_heads
-        self.context_window = max_seq_len
+        self.context_window = context_window
 
-        self.embedding_layer = EmbeddingLayer(vocab_size, d_model, max_seq_len)
+        self.embedding_layer = EmbeddingLayer(vocab_size, d_model, context_window)
         self.blocks = nn.ModuleList([TransformerBlock(d_model, n_heads) for _ in range(n_blocks)])
         self.layer_norm = nn.LayerNorm(d_model)
         self.linear = nn.Linear(d_model, vocab_size)
@@ -61,12 +61,12 @@ if __name__ == "__main__":
     vocab_size = 20
     d_model = 4
     n_blocks = 6
-    max_seq_len = 10
+    context_window = 10
 
     X = torch.tensor([3, 4, 5, 3, 1, 2, 3, 10]).view(1,-1)
     
     print(X.shape)
     
-    transformer = Transformer(vocab_size=vocab_size, d_model=d_model, n_blocks=n_blocks, max_seq_len=max_seq_len)
+    transformer = Transformer(vocab_size=vocab_size, d_model=d_model, n_blocks=n_blocks, context_window=context_window)
 
     print(transformer(X))

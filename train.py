@@ -140,7 +140,7 @@ def main():
         d_model=d_model,
         n_blocks=n_blocks,
         n_heads=n_heads,
-        max_seq_len=context_window,
+        context_window=context_window,
     )
 
     # select optimizer, criterion
