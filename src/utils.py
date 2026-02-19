@@ -1,7 +1,8 @@
 import json
 
+
 def save_as_json(data, filename):
-    """ Saves data to filename as json
+    """Saves data to filename as json
 
     Args:
         data (dict): represents data to store

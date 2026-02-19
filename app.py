@@ -5,11 +5,17 @@ from src.tokenizer import Tokenizer
 from src.model.llm import Transformer
 from inference import Inference
 
+
 def normalize(tokenizer_state_dict):
-    _, _, id_to_tokens = tokenizer_state_dict["vocab_size"], tokenizer_state_dict["token_to_id"], tokenizer_state_dict["id_to_token"]
+    _, _, id_to_tokens = (
+        tokenizer_state_dict["vocab_size"],
+        tokenizer_state_dict["token_to_id"],
+        tokenizer_state_dict["id_to_token"],
+    )
     id_to_tokens = {int(token_id): token for token_id, token in id_to_tokens.items()}
     tokenizer_state_dict["id_to_token"] = id_to_tokens
     return tokenizer_state_dict
+
 
 def load_tokenizer(checkpoint):
 
@@ -65,8 +71,10 @@ class ModelInterface:
     def __init__(self, inference_model: Inference):
         self.inference_model = inference_model
 
-    def predict(self, query, max_response_tokens = 50):
-        return self.inference_model.response(query, max_response_tokens=max_response_tokens)
+    def predict(self, query, max_response_tokens=50):
+        return self.inference_model.response(
+            query, max_response_tokens=max_response_tokens
+        )
 
 
 def main():

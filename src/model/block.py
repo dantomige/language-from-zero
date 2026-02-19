@@ -13,17 +13,17 @@ class TransformerBlock(nn.Module):
         self.first_norm_layer = nn.LayerNorm(d_model)
         self.attention_layer = CausalMultiHeadSelfAttention(d_model, n_heads)
         self.second_norm_layer = nn.LayerNorm(d_model)
-        self.FFNN_layer1 = nn.Linear(in_features=d_model, out_features=d_model*4)
-        self.FFNN_layer2 = nn.Linear(in_features=d_model*4, out_features=d_model)
+        self.FFNN_layer1 = nn.Linear(in_features=d_model, out_features=d_model * 4)
+        self.FFNN_layer2 = nn.Linear(in_features=d_model * 4, out_features=d_model)
 
     def forward(self, x):
-        
+
         norm_x = self.first_norm_layer(x)
         weighted_values = self.attention_layer(norm_x)
-        norm_values = self.second_norm_layer(weighted_values + x) # residual connection
+        norm_values = self.second_norm_layer(weighted_values + x)  # residual connection
         ffnn_out = self.FFNN_layer2(self.FFNN_layer1(norm_values))
 
-        return ffnn_out + norm_values # residual connection
+        return ffnn_out + norm_values  # residual connection
 
 
 if __name__ == "__main__":
@@ -42,9 +42,8 @@ if __name__ == "__main__":
 
     # layer_norm = nn.LayerNorm(d_model)
     # batch_norm = nn.BatchNorm1d(d_model)
-    
+
     # outx = layer_norm(x)
     # outX = batch_norm(X.transpose(1,2))
 
     # print(outx, outX.transpose(1,2))
-

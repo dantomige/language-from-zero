@@ -9,10 +9,10 @@ class Inference:
         self.model = model
         self.tokenizer = tokenizer
 
-    def response(self, query, max_response_tokens, temperature = 1):
+    def response(self, query, max_response_tokens, temperature=1):
         ids = self.tokenizer.tokenize(query)
         ids_tensor = torch.tensor([ids])
-        ids_in_context_window = ids_tensor[-self.model.context_window:]
+        ids_in_context_window = ids_tensor[-self.model.context_window :]
 
         generated_response_token_ids = []
 
@@ -25,14 +25,14 @@ class Inference:
             new_token_id = guesses[0, -1]
 
             generated_response_token_ids.append(new_token_id.item())
-            
+
             ids_in_context_window = torch.cat(
-                [ids_in_context_window, torch.tensor([[new_token_id]])]
-            , dim=1)
+                [ids_in_context_window, torch.tensor([[new_token_id]])], dim=1
+            )
 
             _, curr_window_size = ids_in_context_window.shape
-            if  self.model.context_window < curr_window_size:
-                ids_in_context_window = ids_in_context_window[:,1:]
+            if self.model.context_window < curr_window_size:
+                ids_in_context_window = ids_in_context_window[:, 1:]
 
         response = self.tokenizer.detokenize(generated_response_token_ids)
         return self.format(response)

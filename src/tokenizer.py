@@ -2,19 +2,23 @@ import re
 import torch
 import torch.nn.functional as F
 
+
 class Tokenizer:
-    
+
     DEFAULT_SPECIAL_TOKENS = ["<PAD>", "<UNK>", "<BOS>", "<EOS>"]
     UNKNOWN_TOKEN = "<UNK>"
 
-    def __init__(self, special_tokens = None):
+    def __init__(self, special_tokens=None):
         self.vocab_size = 0
         self.token_to_id = {}
         self.id_to_token = {}
 
-        tokens_to_add = special_tokens if special_tokens is not None else self.DEFAULT_SPECIAL_TOKENS
+        tokens_to_add = (
+            special_tokens
+            if special_tokens is not None
+            else self.DEFAULT_SPECIAL_TOKENS
+        )
         self.special_tokens = tokens_to_add
-
 
         for word in tokens_to_add:
             self.add_to_vocab(word)
@@ -43,16 +47,16 @@ class Tokenizer:
                     token = self.UNKNOWN_TOKEN
                 else:
                     self.add_to_vocab(token)
-                    
+
             ids.append(self.token_to_id[token])
 
         return ids
-    
+
     def segment(self, text: str):
         text = text.lower()
-        tokens = re.findall(r'\d+|\w+|[^\w\s]', text)
+        tokens = re.findall(r"\d+|\w+|[^\w\s]", text)
         return tokens
-    
+
     def get_id(self, token: str):
         if token not in self.special_tokens:
             token = token.lower()
@@ -60,7 +64,7 @@ class Tokenizer:
 
     def get_token(self, id):
         return self.id_to_token.get(id, None)
-    
+
     def add_to_vocab(self, word: str):
         """Adds word to the vocab. Only changes vocabulary if word is not already in the vocabulary
 
@@ -69,33 +73,38 @@ class Tokenizer:
         """
         if word not in self.special_tokens:
             word = word.lower()
-        
+
         if word in self.token_to_id:
             return
-        
+
         word_id = self.vocab_size
         self.token_to_id[word] = word_id
         self.id_to_token[word_id] = word
         self.vocab_size += 1
-
 
     def detokenize(self, ids):
         tokens = []
         for id in ids:
             token = self.get_token(id)
             if token is None:
-                raise ValueError(f"All ids must be present in the tokenizer. {id} not present in tokenizer")
+                raise ValueError(
+                    f"All ids must be present in the tokenizer. {id} not present in tokenizer"
+                )
             tokens.append(token)
         return tokens
 
     def load_from_state_dict(self, state_dict):
-        self.vocab_size, self.token_to_id, self.id_to_token = state_dict["vocab_size"], state_dict["token_to_id"], state_dict["id_to_token"]
+        self.vocab_size, self.token_to_id, self.id_to_token = (
+            state_dict["vocab_size"],
+            state_dict["token_to_id"],
+            state_dict["id_to_token"],
+        )
 
     def state_dict(self):
         state_dict = {
             "vocab_size": self.vocab_size,
             "token_to_id": self.token_to_id,
-            "id_to_token": self.id_to_token
+            "id_to_token": self.id_to_token,
         }
         return state_dict
 
@@ -103,7 +112,7 @@ class Tokenizer:
 if __name__ == "__main__":
     tknizr = Tokenizer()
 
-    text = '''
+    text = """
     On March 14, 2025, Dr. Eleanor Finch stood at the podium and declared: “We’ve reached 97.3% accuracy on the model—an unprecedented milestone!” 
     The audience erupted, clapping, cheering, even whispering: “Is this real? Can it scale?”  
 
@@ -126,18 +135,17 @@ if __name__ == "__main__":
     Funny how silence feels louder than applause.”  
 
     Then she closed the book, turned off the lamp, and whispered: “Let’s see what tomorrow brings.”
-    '''
-    
-    other_text = '''
+    """
+
+    other_text = """
     The train screeched into the station at exactly 6:42 a.m., steam hissing and wheels grinding against the rails. 
     Commuters shuffled forward, eyes glued to their phones, earbuds in, coffee cups half-empty. 
     Among them was Daniel, carrying a worn leather briefcase and a secret he had sworn never to tell. 
     The announcement echoed overhead: “Next stop, Riverside.” 
     He hesitated, staring at the sign, wondering if this was the day everything would change.
-    '''
+    """
 
     tkns = tknizr.tokenize(text, update_vocab=True)
     other_tkns = tknizr.tokenize(other_text)
 
     print(tknizr.id_to_token)
-

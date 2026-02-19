@@ -19,7 +19,7 @@ def train_transformer(
     device: torch.device,
     num_epochs: int = 1,
     num_batches: Optional[int] = None,
-    stop_loss: Optional[int] = None
+    stop_loss: Optional[int] = None,
 ):
 
     model.train()
@@ -162,7 +162,7 @@ def main():
         device=device,
         num_epochs=num_epochs,
         num_batches=num_batches,
-        stop_loss=stop_loss
+        stop_loss=stop_loss,
     )
 
     print("Saving model")
