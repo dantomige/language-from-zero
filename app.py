@@ -17,10 +17,10 @@ def normalize(tokenizer_state_dict):
     return tokenizer_state_dict
 
 
-def load_tokenizer(checkpoint):
+def load_tokenizer(checkpoint, path_to_file = ""):
 
     tokenizer_filename = checkpoint["tokenizer_filename"]
-    with open(tokenizer_filename, "r") as f:
+    with open(path_to_file + tokenizer_filename, "r") as f:
         tokenizer_state_dict = json.load(f)
 
     tokenizer_state_dict = normalize(tokenizer_state_dict)
@@ -54,11 +54,11 @@ def load_llm_model(checkpoint):
     return llm_model
 
 
-def load_inference_model(filepath):
+def load_inference_model(filename, path_to_file = ""):
 
-    checkpoint = torch.load(filepath)
+    checkpoint = torch.load(path_to_file + filename)
 
-    tokenizer = load_tokenizer(checkpoint=checkpoint)
+    tokenizer = load_tokenizer(checkpoint=checkpoint, path_to_file=path_to_file)
     llm_model = load_llm_model(checkpoint=checkpoint)
 
     inference_model = Inference(llm_model, tokenizer)
@@ -78,9 +78,9 @@ class ModelInterface:
 
 
 def main():
-    FILENAME = "src/checkpoints/head.pth"
+    filename = "head.pth"
 
-    inference_model = load_inference_model(FILENAME)
+    inference_model = load_inference_model(filename, path_to_file="src/checkpoints/")
 
     model_interface = ModelInterface(inference_model=inference_model)
 
