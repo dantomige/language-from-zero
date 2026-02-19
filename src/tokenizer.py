@@ -123,8 +123,10 @@ class Tokenizer:
                 )
             tokens.append(token)
         return tokens
-    
-    def save_pretrained(self, folder_path: str | Path, filename: str = "tokenizer_state.json"):
+
+    def save_pretrained(
+        self, folder_path: str | Path, filename: str = "tokenizer_state.json"
+    ):
         """Saves the tokenizer state to a file.
 
         Args:
@@ -142,7 +144,7 @@ class Tokenizer:
             state_dict (dict): dictionary containing tokenizer state with keys "vocab_size", "token_to_id", and "id_to_token"
         """
         path = Path(folder_path) / filename
-        state_dict = read_json(path) 
+        state_dict = read_json(path)
 
         tokenizer = cls()
         tokenizer.vocab_size = state_dict["vocab_size"]
