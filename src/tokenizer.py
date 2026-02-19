@@ -1,6 +1,7 @@
 import re
 import torch
 import torch.nn.functional as F
+from typing import Optional, List, Dict
 
 
 class Tokenizer:
@@ -8,7 +9,7 @@ class Tokenizer:
     DEFAULT_SPECIAL_TOKENS = ["<PAD>", "<UNK>", "<BOS>", "<EOS>"]
     UNKNOWN_TOKEN = "<UNK>"
 
-    def __init__(self, special_tokens=None):
+    def __init__(self, special_tokens: Optional[List[str]] = None):
         self.vocab_size = 0
         self.token_to_id = {}
         self.id_to_token = {}
@@ -27,7 +28,7 @@ class Tokenizer:
         # ensure ids are always ints
         pass
 
-    def tokenize(self, text, update_vocab=False):
+    def tokenize(self, text: str, update_vocab: bool = False) -> List[int]:
         """Takes raw text and produces numerical encoding of its tokens.
 
         Args:
@@ -52,17 +53,17 @@ class Tokenizer:
 
         return ids
 
-    def segment(self, text: str):
+    def segment(self, text: str) -> List[str]:
         text = text.lower()
         tokens = re.findall(r"\d+|\w+|[^\w\s]", text)
         return tokens
 
-    def get_id(self, token: str):
+    def get_id(self, token: str) -> Optional[int]:
         if token not in self.special_tokens:
             token = token.lower()
         return self.token_to_id.get(token, None)
 
-    def get_token(self, id):
+    def get_token(self, id: int) -> Optional[str]:
         return self.id_to_token.get(id, None)
 
     def add_to_vocab(self, word: str):
@@ -82,7 +83,7 @@ class Tokenizer:
         self.id_to_token[word_id] = word
         self.vocab_size += 1
 
-    def detokenize(self, ids):
+    def detokenize(self, ids: List[int]) -> List[str]:
         tokens = []
         for id in ids:
             token = self.get_token(id)
@@ -93,14 +94,14 @@ class Tokenizer:
             tokens.append(token)
         return tokens
 
-    def load_from_state_dict(self, state_dict):
+    def load_from_state_dict(self, state_dict: dict):
         self.vocab_size, self.token_to_id, self.id_to_token = (
             state_dict["vocab_size"],
             state_dict["token_to_id"],
             state_dict["id_to_token"],
         )
 
-    def state_dict(self):
+    def state_dict(self) -> dict:
         state_dict = {
             "vocab_size": self.vocab_size,
             "token_to_id": self.token_to_id,

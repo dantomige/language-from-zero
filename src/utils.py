@@ -1,7 +1,7 @@
 import json
 
 
-def save_as_json(data, filename):
+def save_as_json(data, filename: str) -> None:
     """Saves data to filename as json
 
     Args:
