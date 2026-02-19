@@ -1,7 +1,10 @@
+from __future__ import annotations
 import re
 import torch
 import torch.nn.functional as F
+from src.utils.io import save_json, read_json
 from typing import Optional
+from pathlib import Path
 
 
 class Tokenizer:
@@ -120,18 +123,32 @@ class Tokenizer:
                 )
             tokens.append(token)
         return tokens
+    
+    def save_pretrained(self, folder_path: str | Path, filename: str = "tokenizer_state.json"):
+        """Saves the tokenizer state to a file.
 
-    def load_from_state_dict(self, state_dict: dict):
-        """Loads tokenizer state from a dictionary.
+        Args:
+            folder_path (str | Path): path to folder where tokenizer state file will be saved
+            filename (str, optional): name of file to save tokenizer state to. Defaults to "tokenizer_state.json".
+        """
+        path = Path(folder_path) / filename
+        save_json(self.state_dict(), path)
+
+    @classmethod
+    def from_pretrained(cls, path: str | Path) -> Tokenizer:
+        """Creates a new tokenizer instance from a state dictionary.
 
         Args:
             state_dict (dict): dictionary containing tokenizer state with keys "vocab_size", "token_to_id", and "id_to_token"
         """
-        self.vocab_size, self.token_to_id, self.id_to_token = (
-            state_dict["vocab_size"],
-            state_dict["token_to_id"],
-            state_dict["id_to_token"],
-        )
+        path = Path(path)
+        state_dict = read_json(path) 
+
+        tokenizer = cls()
+        tokenizer.vocab_size = state_dict["vocab_size"]
+        tokenizer.token_to_id = state_dict["token_to_id"]
+        tokenizer.id_to_token = state_dict["id_to_token"]
+        return tokenizer
 
     def state_dict(self) -> dict:
         """Retrieves the state of the tokenizer.

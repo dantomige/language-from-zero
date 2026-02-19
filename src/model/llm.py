@@ -1,3 +1,4 @@
+from __future__ import annotations
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -51,6 +52,40 @@ class Transformer(nn.Module):
         logits = self.linear(norm_embeddings)
 
         return logits
+    
+    def save_pretrained(self, folder_path: str | Path, model_filename: str = "model_state.pt", config_filename: str = "config.json"):
+        """Saves model state to a file.
+
+        Args:
+            folder_path (str): path to folder where model state file "model_state.pt" will be saved
+        """
+        path = Path(folder_path)
+        torch.save(self.state_dict(), path / model_filename)
+        self.config.save_pretrained(folder_path=folder_path, filename=config_filename)
+
+    @classmethod
+    def from_pretrained(
+        cls,
+        folder_path: str | Path,
+        model_filename: str = "model_state.pt",
+        config_filename: str = "config.json",
+    ) -> Transformer:
+        """Loads model state from a file.
+
+        Args:
+            folder_path (str): path to folder containing model state file "model_state.pt"
+        """
+        path = Path(folder_path)
+        model_state_dict = torch.load(path / model_filename)
+        config = ModelConfig.from_pretrained(path / config_filename)
+
+        model = cls(config=config)
+        model.load_state_dict(model_state_dict)
+        return model
+
+    def get_config(self):
+        """Returns a copy ofthe model config."""
+        return self.config.model_copy()
 
     def decode(self, logits):
         return torch.argmax(logits, dim=-1)
