@@ -66,17 +66,17 @@ class Transformer(nn.Module):
     def from_pretrained(
         cls,
         folder_path: str | Path,
-        model_filename: str = "model_state.pt",
-        config_filename: str = "config.json",
+        model_filename: str,
+        config_filename: str,
     ) -> Transformer:
-        """Loads model state from a file.
+        """Loads model state from a file. Assumes model state and config are located in the given folder path.   
 
         Args:
             folder_path (str): path to folder containing model state file "model_state.pt"
         """
-        path = Path(folder_path)
-        model_state_dict = torch.load(path / model_filename)
-        config = ModelConfig.from_pretrained(path / config_filename)
+        folder_path = Path(folder_path)
+        model_state_dict = torch.load(folder_path / model_filename)
+        config = ModelConfig.from_pretrained(folder_path=folder_path, filename=config_filename)
 
         model = cls(config=config)
         model.load_state_dict(model_state_dict)

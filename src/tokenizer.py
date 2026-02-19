@@ -135,13 +135,13 @@ class Tokenizer:
         save_json(self.state_dict(), path)
 
     @classmethod
-    def from_pretrained(cls, path: str | Path) -> Tokenizer:
+    def from_pretrained(cls, folder_path: str | Path, filename: str) -> Tokenizer:
         """Creates a new tokenizer instance from a state dictionary.
 
         Args:
             state_dict (dict): dictionary containing tokenizer state with keys "vocab_size", "token_to_id", and "id_to_token"
         """
-        path = Path(path)
+        path = Path(folder_path) / filename
         state_dict = read_json(path) 
 
         tokenizer = cls()

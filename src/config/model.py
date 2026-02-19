@@ -10,12 +10,12 @@ class ModelConfig(BaseModel):
     n_heads: int
     context_window: int
 
-    def save_pretrained(self, folder_path: str | Path, filename: str = "config.json"):
+    def save_pretrained(self, folder_path: str | Path, filename: str):
         path = Path(folder_path) / filename
         save_json(self.model_dump(), path)
 
     @classmethod
-    def from_pretrained(cls, folder_path: str | Path, filename: str = "config.json") -> ModelConfig:
+    def from_pretrained(cls, folder_path: str | Path, filename: str) -> ModelConfig:
         path = Path(folder_path) / filename
         
         # Read the raw JSON
