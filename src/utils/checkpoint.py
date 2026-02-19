@@ -18,7 +18,7 @@ class ModelBundle(NamedTuple):
 
 
 class ExperimentMetadata(BaseModel):
-    experiment_name: str
+    experiment_folder_name: str
     time_saved_utc: str
     config_filename: str
     model_state_filename: str
@@ -49,14 +49,14 @@ class CheckpointManager:
 
     def save(
         self,
-        experiment_name: str | Path,
+        experiment_folder_name: str | Path,
         model: Transformer,
         tokenizer: Tokenizer,
         config: ModelConfig,
     ):
 
         # create experiment directory if it doesn't exist
-        folder = self.checkpoint_dir / experiment_name
+        folder = self.checkpoint_dir / experiment_folder_name
         folder.mkdir(parents=True, exist_ok=True)
 
         # save model config
@@ -75,7 +75,7 @@ class CheckpointManager:
         time_saved_utc_formatted: str = time_saved_utc.strftime("%Y-%m-%d %H:%M:%S UTC")
 
         metadata = ExperimentMetadata(
-            experiment_name=experiment_name,
+            experiment_folder_name=experiment_folder_name,
             time_saved_utc=time_saved_utc_formatted,
             config_filename=self.CONFIG_FILENAME,
             model_state_filename=self.MODEL_STATE_FILENAME,
@@ -86,17 +86,17 @@ class CheckpointManager:
 
         return
 
-    def load(self, experiment_name: str | Path) -> ModelBundle:
+    def load(self, experiment_folder_name: str | Path) -> ModelBundle:
         """_summary_
 
         Args:
-            experiment_name (str): _description_
+            experiment_folder_name (str): _description_
 
         Returns:
             dict: _description_
         """
 
-        folder_path = self.checkpoint_dir / experiment_name
+        folder_path = self.checkpoint_dir / experiment_folder_name
 
         metadata = ExperimentMetadata.load(
             folder_path=folder_path, filename=self.METADATA_FILENAME
@@ -139,7 +139,7 @@ if __name__ == "__main__":
     tokenizer = Tokenizer()
 
     checkpoint_manager.save(
-        experiment_name="test_1",
+        experiment_folder_name="test_1",
         model=model,
         tokenizer=tokenizer,
         config=model_config,
@@ -147,7 +147,7 @@ if __name__ == "__main__":
 
     pause = input("Press enter to load checkpoint...")
 
-    bundle = checkpoint_manager.load(experiment_name="test_1")
+    bundle = checkpoint_manager.load(experiment_folder_name="test_1")
 
     print(bundle.config)
     print(bundle.model)
