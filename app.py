@@ -6,7 +6,7 @@ class ModelInterface:
     def __init__(self, inference_model: Inference):
         self.inference_model = inference_model
 
-    def predict(self, query, max_response_tokens=50):
+    def predict(self, query, max_response_tokens=100):
         return self.inference_model.response(
             query, max_response_tokens=max_response_tokens
         )
