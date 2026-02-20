@@ -30,6 +30,23 @@ class Inference:
         inference_model = cls(model = bundle.model, tokenizer=bundle.tokenizer)
 
         return inference_model
+    
+    def prepare_query(self, query: str) -> torch.Tensor:
+        """Tokenizes the query and converts it to a tensor.
+
+        Args:
+            query (str): query to prepare
+        Returns:
+            torch.Tensor: tensor containing token ids of the query
+        """
+        query_metadata_start_token_ids = [self.tokenizer.get_id(self.tokenizer.START_TOKEN), self.tokenizer.get_id(self.tokenizer.HEADER_START_TOKEN), self.tokenizer.get_id("user"), self.tokenizer.get_id(self.tokenizer.HEADER_END_TOKEN)]
+        query_token_ids = self.tokenizer.tokenize(query)
+        query_metadata_end_token_ids = [self.tokenizer.get_id(self.tokenizer.END_OF_TURN_TOKEN)]
+
+        full_query_token_ids = query_metadata_start_token_ids + query_token_ids + query_metadata_end_token_ids
+        ids_tensor = torch.tensor([full_query_token_ids])
+
+        return ids_tensor
 
     def response(self, query: str, max_response_tokens: int, temperature: float = 1.0) -> str:
         """Given a query generates a response by predicting the next token until max_response_tokens is reached.
