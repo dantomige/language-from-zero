@@ -215,9 +215,9 @@ def train_shareGPT():
 
     # hyperparameters/global parameters
     print("Hyperparameters")
-    d_model = 256
-    context_window = 256
-    batch_size = 16
+    d_model = 512
+    context_window = 512
+    batch_size = 8
     n_blocks = 6
     n_heads = 8
     print("d_model: ", d_model)
@@ -237,7 +237,7 @@ def train_shareGPT():
         num_books=5, update_vocab=True
     )  # prime the tokenizer with some words from the gutenberg dataset, to speed up tokenization of shareGPT conversations
 
-    dataset = data_processor.from_shareGPT(limit=100)
+    dataset = data_processor.from_shareGPT(limit=150)
     train_size = int(0.9 * len(dataset))
     validate_size = len(dataset) - train_size
     train_dataset, validate_dataset = random_split(
@@ -270,14 +270,17 @@ def train_shareGPT():
     # select optimizer, criterion
     print("Selecting optimizer and criterion")
     learning_rate = 1e-4
+    weight_decay = 1e-2
     num_epochs = 3
     num_batches_per_epoch = 2500
     num_validation_batches = 10
     stop_loss = None
     print("Learning rate: ", learning_rate)
+    print("Weight decay: ", weight_decay)
 
-    optimizer = Adam(model.parameters(), lr=learning_rate)
-    criterion = nn.CrossEntropyLoss()
+    optimizer = Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
+    label_smoothing = 0.1
+    criterion = nn.CrossEntropyLoss(label_smoothing=label_smoothing)
 
     # train model
     print("Training model ...")
@@ -300,7 +303,7 @@ def train_shareGPT():
     print("Saving model")
     checkpoint_manager = CheckpointManager(checkpoint_dir="src/checkpoints")
     checkpoint_manager.save(
-        "shareGPT_transformer_v2_with_validation",
+        "medium_shareGPT_transformer_v2_with_validation_and_regularization",
         model=model,
         tokenizer=tokenizer,
         config=config,
