@@ -11,6 +11,9 @@ class Tokenizer:
 
     DEFAULT_SPECIAL_TOKENS = ["<PAD>", "<UNK>", "<BOS>", "<EOS>"]
     UNKNOWN_TOKEN = "<UNK>"
+    START_TOKEN = "<BOS>"
+    END_TOKEN = "<EOS>"
+    PAD_TOKEN = "<PAD>"
 
     def __init__(self, special_tokens: Optional[list[str]] = None):
         self.vocab_size = 0
