@@ -129,6 +129,37 @@ class Tokenizer:
                 )
             tokens.append(token)
         return tokens
+    
+    def decode(self, ids: list[int]) -> str:
+        """Converts a list of token ids back into a formatted string.
+
+        Args:
+            ids (list[int]): list of token ids to convert back to string
+            skip_special_tokens (bool): whether to remove tags like <BOS>, <EOS>, etc.
+
+        Returns:
+            str: formatted string corresponding to the given token ids
+        """
+        # 1. Convert IDs to token strings using your existing detokenize method
+        tokens = self.detokenize(ids)
+
+        # 2. Filter special tokens
+        tokens = [t for t in tokens if t not in self.special_tokens]
+
+        # 3. Join tokens with a single space initially
+        text = " ".join(tokens)
+
+        # 4. Clean up punctuation spacing (e.g., "hello , world" -> "hello, world")
+        # This fixes spaces before: . , ! ? : ; ) ] }
+        text = re.sub(r"\s+([.,!?;:}\])])", r"\1", text)
+        
+        # This fixes spaces after: ( [ {
+        text = re.sub(r"([(\[{])\s+", r"\1", text)
+        
+        # Optional: Clean up contraction spacing (e.g., "don ' t" -> "don't")
+        text = re.sub(r"(\w+)\s*'\s*(\w+)", r"\1'\2", text)
+
+        return text.strip().capitalize()
 
     def save_pretrained(
         self, folder_path: str | Path, filename: str = "tokenizer_state.json"
