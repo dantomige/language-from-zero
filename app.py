@@ -1,6 +1,7 @@
 import gradio as gr
 from inference import Inference
 
+
 class ModelInterface:
 
     def __init__(self, inference_model: Inference):
@@ -14,8 +15,8 @@ class ModelInterface:
 
 def main():
     CHECKPOINT_DIR = "src/checkpoints/"
-    EXPERIMENTS_FOLDER_NAME = "head"
-    
+    EXPERIMENTS_FOLDER_NAME = "shareGPT_transformer_v2_with_validation"
+
     inference_model = Inference.from_experiment(
         checkpoint_dir=CHECKPOINT_DIR, experiment_folder_name=EXPERIMENTS_FOLDER_NAME
     )
@@ -28,5 +29,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
