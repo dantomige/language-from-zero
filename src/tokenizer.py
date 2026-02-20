@@ -9,11 +9,14 @@ from pathlib import Path
 
 class Tokenizer:
 
-    DEFAULT_SPECIAL_TOKENS = ["<PAD>", "<UNK>", "<BOS>", "<EOS>"]
+    DEFAULT_SPECIAL_TOKENS = ["<PAD>", "<UNK>", "<BOS>", "<EOS>", "<EOT>", "<HEADER_START>", "<HEADER_END>"]
+    PAD_TOKEN = "<PAD>"
     UNKNOWN_TOKEN = "<UNK>"
     START_TOKEN = "<BOS>"
     END_TOKEN = "<EOS>"
-    PAD_TOKEN = "<PAD>"
+    END_OF_TURN_TOKEN = "<EOT>"
+    HEADER_START_TOKEN = "<HEADER_START>"
+    HEADER_END_TOKEN = "<HEADER_END>"
 
     def __init__(self, special_tokens: Optional[list[str]] = None):
         self.vocab_size = 0
